@@ -7,8 +7,9 @@ import (
 	"github.com/pkg/errors"
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/previousnext/k8s-backup/strategy/pvc"
 	"github.com/previousnext/k8s-backup/config"
+	"github.com/previousnext/k8s-backup/strategy/configmap/mysql"
+	"github.com/previousnext/k8s-backup/strategy/pvc"
 )
 
 // Deploy backup strategies.
@@ -22,11 +23,16 @@ func Deploy(strategy []string, w io.Writer, client *kubernetes.Clientset, params
 		if s == pvc.Name {
 			err := pvc.Deploy(w, client, params)
 			if err != nil {
-				return errors.Wrap(err, "failed to sync PersistentVolumeClaim CronJobs")
+				return errors.Wrap(err, "failed to sync PersistentVolumeClaim strategy")
 			}
 		}
 
-		// @todo, Add Mysql.
+		if s == mysql.Name {
+			err := mysql.Deploy(w, client, params)
+			if err != nil {
+				return errors.Wrap(err, "failed to sync ConfigMap strategy")
+			}
+		}
 
 		return fmt.Errorf("cannot find strategy: %s", s)
 	}

@@ -33,7 +33,7 @@ func Deploy(w io.Writer, client *kubernetes.Clientset, cfg config.Config) error 
 	for _, pvc := range pvcs.Items {
 		fmt.Println("Syncing CronJob:", pvc.ObjectMeta.Namespace, "|", pvc.ObjectMeta.Name)
 
-		cronjob, err := generateCronJob(pvc, cfg)
+		cronjob, err := generateCronJob(pvc.ObjectMeta.Namespace, pvc.ObjectMeta.Name, cfg)
 		if err != nil {
 			return errors.Wrap(err, "failed to generate CronJob")
 		}
@@ -48,11 +48,11 @@ func Deploy(w io.Writer, client *kubernetes.Clientset, cfg config.Config) error 
 }
 
 // Helper function to convert a PersistentVolumeClaim into a backup CronJob task.
-func generateCronJob(pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batchv1beta1.CronJob, error) {
+func generateCronJob(namespace, name string, cfg config.Config) (*batchv1beta1.CronJob, error) {
 	cronjob := &batchv1beta1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
-			Namespace: pvc.ObjectMeta.Namespace,
-			Name:      fmt.Sprintf("%s-%s", cfg.Prefix, pvc.ObjectMeta.Name),
+			Namespace: namespace,
+			Name:      fmt.Sprintf("%s-%s", cfg.Prefix, name),
 		},
 	}
 
@@ -66,7 +66,7 @@ func generateCronJob(pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batc
 		return cronjob, errors.Wrap(err, "failed to CronJob resources")
 	}
 
-	bucket, err := cfg.BucketURI(pvc.ObjectMeta.Namespace, Name)
+	bucket, err := cfg.BucketURI(namespace, Name)
 	if err != nil {
 		return cronjob, errors.Wrap(err, "failed to CronJob bucket")
 	}
@@ -76,13 +76,13 @@ func generateCronJob(pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batc
 		ConcurrencyPolicy: batchv1beta1.ForbidConcurrent,
 		JobTemplate: batchv1beta1.JobTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
-				Namespace: pvc.ObjectMeta.Namespace,
+				Namespace: namespace,
 			},
 			Spec: batchv1.JobSpec{
 				BackoffLimit: &Backoff,
 				Template: corev1.PodTemplateSpec{
 					ObjectMeta: metav1.ObjectMeta{
-						Namespace: pvc.ObjectMeta.Namespace,
+						Namespace: namespace,
 					},
 					Spec: corev1.PodSpec{
 						RestartPolicy: "Never",
@@ -95,7 +95,7 @@ func generateCronJob(pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batc
 									"s3",
 									"sync",
 									"/source/",
-									fmt.Sprintf("%s/%s/", bucket, pvc.ObjectMeta.Name),
+									fmt.Sprintf("%s/%s/", bucket, name),
 								},
 								Env:       envvars,
 								Resources: resources,
@@ -113,7 +113,7 @@ func generateCronJob(pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batc
 								Name: "source",
 								VolumeSource: corev1.VolumeSource{
 									PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-										ClaimName: pvc.ObjectMeta.Name,
+										ClaimName: name,
 									},
 								},
 							},

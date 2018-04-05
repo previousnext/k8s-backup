@@ -14,14 +14,7 @@ import (
 )
 
 func TestGenerateCronJob(t *testing.T) {
-	pvc := corev1.PersistentVolumeClaim{
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: "foo",
-			Name:      "bar",
-		},
-	}
-
-	have, err := generateCronJob(pvc, config.Config{
+	have, err := generateCronJob("foo", "bar", config.Config{
 		Namespace: "default",
 		Image:     "previousnext/k8s-backup:latest",
 		Prefix:    "test",

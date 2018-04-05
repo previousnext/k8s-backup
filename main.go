@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	cliStrategies = kingpin.Flag("strategies", "Strategies to use for backing up state").Default("pvc").Envar("BACKUP_STRATEGIES").String()
+	cliStrategies = kingpin.Flag("strategies", "Strategies to use for backing up state").Default("pvc,configmap_mysql").Envar("BACKUP_STRATEGIES").String()
 	cliImage      = kingpin.Flag("image", "Image to use for backup strategies").Default("previousnext/k8s-backup:latest").Envar("BACKUP_IMAGE").String()
 	cliNamespace  = kingpin.Flag("namespace", "Namespace to create backup CronJobs for PersistentVolumeClaims").Default(corev1.NamespaceAll).Envar("K8S_NAMESPACE").String()
 	cliFrequency  = kingpin.Flag("frequency", "How often to run the CronJob").Default("@daily").Envar("BACKUP_FREQUENCY").String()
