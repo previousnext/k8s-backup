@@ -10,12 +10,13 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	"github.com/previousnext/k8s-backup/strategy"
 	"github.com/previousnext/k8s-backup/config"
+	"github.com/previousnext/k8s-backup/strategy"
 )
 
 var (
 	cliStrategies = kingpin.Flag("strategies", "Strategies to use for backing up state").Default("pvc").Envar("BACKUP_STRATEGIES").String()
+	cliImage      = kingpin.Flag("image", "Image to use for backup strategies").Default("previousnext/k8s-backup:latest").Envar("BACKUP_IMAGE").String()
 	cliNamespace  = kingpin.Flag("namespace", "Namespace to create backup CronJobs for PersistentVolumeClaims").Default(corev1.NamespaceAll).Envar("K8S_NAMESPACE").String()
 	cliFrequency  = kingpin.Flag("frequency", "How often to run the CronJob").Default("@daily").Envar("BACKUP_FREQUENCY").String()
 	cliPrefix     = kingpin.Flag("prefix", "Prefix to use for CronJob names").Default("backup-pvc").Envar("BACKUP_PREFIX").String()
@@ -46,6 +47,7 @@ func main() {
 	fmt.Println("Starting to deploy backup strategies")
 
 	err = strategy.Deploy(strings.Split(*cliStrategies, ","), os.Stdout, k8sclient, config.Config{
+		Image:     *cliImage,
 		Namespace: *cliNamespace,
 		Frequency: *cliFrequency,
 		Prefix:    *cliPrefix,
