@@ -12,12 +12,6 @@ func TestValidate(t *testing.T) {
 	err := cfg.Validate()
 	assert.NotNil(t, err)
 
-	// Need to set Namespace.
-	cfg.Namespace = "default"
-
-	err = cfg.Validate()
-	assert.NotNil(t, err)
-
 	// Need to set Image.
 	cfg.Image = "previousnext/k8s-backup:latest"
 

@@ -6,10 +6,6 @@ import (
 
 // Validate the config.
 func (c Config) Validate() error {
-	if c.Namespace == "" {
-		return errors.New("not found: namespace")
-	}
-
 	if c.Image == "" {
 		return errors.New("not found: image")
 	}
