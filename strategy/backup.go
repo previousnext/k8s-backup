@@ -25,6 +25,8 @@ func Deploy(strategy []string, w io.Writer, client *kubernetes.Clientset, params
 			if err != nil {
 				return errors.Wrap(err, "failed to sync PersistentVolumeClaim strategy")
 			}
+
+			continue
 		}
 
 		if s == mysql.Name {
@@ -32,6 +34,8 @@ func Deploy(strategy []string, w io.Writer, client *kubernetes.Clientset, params
 			if err != nil {
 				return errors.Wrap(err, "failed to sync ConfigMap strategy")
 			}
+
+			continue
 		}
 
 		return fmt.Errorf("cannot find strategy: %s", s)

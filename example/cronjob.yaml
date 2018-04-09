@@ -1,0 +1,23 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: k8s-backup
+  namespace: kube-system
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: sync
+            image: previousnext/k8s-backup:latest
+            env:
+              - name:  AWS_S3_BUCKET
+                value: k8s-backups
+              - name:  AWS_ACCESS_KEY_ID
+                value: yyyyyyyyyyyyyyyyyyyy
+              - name:  AWS_SECRET_ACCESS_KEY
+                value: xxxxxxxxxxxxxxxxxxxx
+          restartPolicy: OnFailure

@@ -19,7 +19,7 @@ var (
 	cliImage      = kingpin.Flag("image", "Image to use for backup strategies").Default("previousnext/k8s-backup:latest").Envar("BACKUP_IMAGE").String()
 	cliNamespace  = kingpin.Flag("namespace", "Namespace to create backup CronJobs for PersistentVolumeClaims").Default(corev1.NamespaceAll).Envar("K8S_NAMESPACE").String()
 	cliFrequency  = kingpin.Flag("frequency", "How often to run the CronJob").Default("@daily").Envar("BACKUP_FREQUENCY").String()
-	cliPrefix     = kingpin.Flag("prefix", "Prefix to use for CronJob names").Default("backup-pvc").Envar("BACKUP_PREFIX").String()
+	cliPrefix     = kingpin.Flag("prefix", "Prefix to use for CronJob names").Default("k8s-backup").Envar("BACKUP_PREFIX").String()
 	cliBucket     = kingpin.Flag("aws-bucket", "Bucket to sync PersistentVolumeClaims files").Default("k8s-backup").Envar("AWS_S3_BUCKET").String()
 	cliCredID     = kingpin.Flag("aws-id", "Credentials to use when syncing PersistentVolumeClaim").Default("").Envar("AWS_ACCESS_KEY_ID").String()
 	cliCredSecret = kingpin.Flag("aws-secret", "Credentials to use when syncing PersistentVolumeClaim").Default("").Envar("AWS_SECRET_ACCESS_KEY").String()

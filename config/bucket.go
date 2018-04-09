@@ -7,10 +7,10 @@ import (
 )
 
 // BucketURI for AWS S3.
-func (p Config) BucketURI(namespace, strategy string) (string, error) {
-	if p.Bucket == "" {
+func (c Config) BucketURI(namespace, group string) (string, error) {
+	if c.Bucket == "" {
 		return "", errors.New("not found: bucket")
 	}
 
-	return fmt.Sprintf("s3://%s/%s/%s", p.Bucket, namespace, strategy), nil
+	return fmt.Sprintf("s3://%s/%s/%s", c.Bucket, namespace, group), nil
 }
