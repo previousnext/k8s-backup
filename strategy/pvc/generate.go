@@ -72,6 +72,7 @@ func generateCronJob(group string, pvc corev1.PersistentVolumeClaim, cfg config.
 									"aws",
 									"s3",
 									"sync",
+									"--delete",
 									"/source/",
 									fmt.Sprintf("%s/pvc/%s/", bucket, pvc.ObjectMeta.Name),
 								},
