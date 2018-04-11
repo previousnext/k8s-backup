@@ -10,7 +10,7 @@ import (
 
 	"github.com/previousnext/k8s-backup/config"
 	"github.com/previousnext/k8s-backup/pkg/annotation"
-	skprcronjob "github.com/previousnext/skpr/utils/k8s/cronjob"
+	cronjobutils "github.com/previousnext/k8s-backup/pkg/cronjob"
 )
 
 // Name of this backup strategy.
@@ -39,7 +39,7 @@ func Deploy(w io.Writer, client *kubernetes.Clientset, cfg config.Config) error 
 			return errors.Wrap(err, "failed to generate CronJob")
 		}
 
-		err = skprcronjob.Deploy(client, cronjob)
+		err = cronjobutils.Deploy(client, cronjob)
 		if err != nil {
 			return errors.Wrap(err, "failed to deploy CronJob")
 		}

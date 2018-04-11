@@ -21,6 +21,5 @@ VERSION=$(shell git describe --tags --always)
 
 # Releases the project Docker Hub
 release:
-	docker build -t ${IMAGE}:${VERSION} -t ${IMAGE}:latest .
+	docker build -t ${IMAGE}:${VERSION} .
 	docker push ${IMAGE}:${VERSION}
-	docker push ${IMAGE}:latest

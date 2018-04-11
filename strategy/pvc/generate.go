@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 	batchv1 "k8s.io/api/batch/v1"
-	batchv1beta1 "k8s.io/api/batch/v1beta1"
+	batchv2alpha1 "k8s.io/api/batch/v2alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -13,8 +13,8 @@ import (
 )
 
 // Helper function to convert a PersistentVolumeClaim into a backup CronJob task.
-func generateCronJob(group string, pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batchv1beta1.CronJob, error) {
-	cronjob := &batchv1beta1.CronJob{
+func generateCronJob(group string, pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batchv2alpha1.CronJob, error) {
+	cronjob := &batchv2alpha1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: pvc.ObjectMeta.Namespace,
 			Name:      fmt.Sprintf("%s-pvc-%s", cfg.Prefix, pvc.ObjectMeta.Name),
@@ -48,11 +48,11 @@ func generateCronJob(group string, pvc corev1.PersistentVolumeClaim, cfg config.
 		deadline int64 = 1800
 	)
 
-	cronjob.Spec = batchv1beta1.CronJobSpec{
+	cronjob.Spec = batchv2alpha1.CronJobSpec{
 		Schedule:                cfg.Frequency,
-		ConcurrencyPolicy:       batchv1beta1.ForbidConcurrent,
+		ConcurrencyPolicy:       batchv2alpha1.ForbidConcurrent,
 		StartingDeadlineSeconds: &deadline,
-		JobTemplate: batchv1beta1.JobTemplateSpec{
+		JobTemplate: batchv2alpha1.JobTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: pvc.ObjectMeta.Namespace,
 			},

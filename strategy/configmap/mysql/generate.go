@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 	batchv1 "k8s.io/api/batch/v1"
-	batchv1beta1 "k8s.io/api/batch/v1beta1"
+	batchv2alpha1 "k8s.io/api/batch/v2alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -42,8 +42,8 @@ func getMysqlConnection(configmap corev1.ConfigMap) (string, string, string, str
 }
 
 // Helper function to convert a PersistentVolumeClaim into a backup CronJob task.
-func generateCronJob(group string, configmap corev1.ConfigMap, cfg config.Config) (*batchv1beta1.CronJob, error) {
-	cronjob := &batchv1beta1.CronJob{
+func generateCronJob(group string, configmap corev1.ConfigMap, cfg config.Config) (*batchv2alpha1.CronJob, error) {
+	cronjob := &batchv2alpha1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: configmap.ObjectMeta.Namespace,
 			Name:      fmt.Sprintf("%s-configmap-mysql-%s", cfg.Prefix, configmap.ObjectMeta.Name),
@@ -82,11 +82,11 @@ func generateCronJob(group string, configmap corev1.ConfigMap, cfg config.Config
 		deadline int64 = 1800
 	)
 
-	cronjob.Spec = batchv1beta1.CronJobSpec{
+	cronjob.Spec = batchv2alpha1.CronJobSpec{
 		Schedule:                cfg.Frequency,
-		ConcurrencyPolicy:       batchv1beta1.ForbidConcurrent,
+		ConcurrencyPolicy:       batchv2alpha1.ForbidConcurrent,
 		StartingDeadlineSeconds: &deadline,
-		JobTemplate: batchv1beta1.JobTemplateSpec{
+		JobTemplate: batchv2alpha1.JobTemplateSpec{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: configmap.ObjectMeta.Namespace,
 			},
@@ -106,7 +106,7 @@ func generateCronJob(group string, configmap corev1.ConfigMap, cfg config.Config
 									"/bin/sh", "-c",
 								},
 								Args: []string{
-									fmt.Sprintf("mysqldump --host=%s --user=%s --pass=%s %s > /tmp/db.sql", mysqlHost, mysqlUser, mysqlPass, mysqlName),
+									fmt.Sprintf("mysqldump --host='%s' --user='%s' --pass='%s' %s > /tmp/db.sql", mysqlHost, mysqlUser, mysqlPass, mysqlName),
 								},
 								Resources:       resources,
 								ImagePullPolicy: "Always",
