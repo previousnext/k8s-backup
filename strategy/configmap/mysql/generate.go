@@ -106,7 +106,7 @@ func generateCronJob(group string, configmap corev1.ConfigMap, cfg config.Config
 									"/bin/sh", "-c",
 								},
 								Args: []string{
-									fmt.Sprintf("mysqldump --host='%s' --user='%s' --pass='%s' %s > /tmp/db.sql", mysqlHost, mysqlUser, mysqlPass, mysqlName),
+									fmt.Sprintf("mysqldump --single-transaction --host='%s' --user='%s' --pass='%s' %s > /tmp/db.sql", mysqlHost, mysqlUser, mysqlPass, mysqlName),
 								},
 								Resources:       resources,
 								ImagePullPolicy: "Always",
