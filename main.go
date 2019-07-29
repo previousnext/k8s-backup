@@ -18,7 +18,7 @@ var (
 	cliStrategies = kingpin.Flag("strategies", "Strategies to use for backing up state").Default("pvc,configmap_mysql").Envar("BACKUP_STRATEGIES").String()
 	cliImage      = kingpin.Flag("image", "Image to use for backup strategies").Default("previousnext/k8s-backup:latest").Envar("BACKUP_IMAGE").String()
 	cliNamespace  = kingpin.Flag("namespace", "Namespace to create backup CronJobs for PersistentVolumeClaims").Default(corev1.NamespaceAll).Envar("K8S_NAMESPACE").String()
-	cliFrequency  = kingpin.Flag("frequency", "How often to run the CronJob").Default("@daily").Envar("BACKUP_FREQUENCY").String()
+	cliCronSplit  = kingpin.Flag("cron-split", "CronJobs will be created with 'X * * * *' an split up by the configured duration").Default("10").Envar("BACKUP_CRON_SPLIT").Int()
 	cliPrefix     = kingpin.Flag("prefix", "Prefix to use for CronJob names").Default("k8s-backup").Envar("BACKUP_PREFIX").String()
 	cliBucket     = kingpin.Flag("aws-bucket", "Bucket to sync PersistentVolumeClaims files").Default("k8s-backup").Envar("AWS_S3_BUCKET").String()
 	cliCredID     = kingpin.Flag("aws-id", "Credentials to use when syncing PersistentVolumeClaim").Default("").Envar("AWS_ACCESS_KEY_ID").String()
@@ -49,7 +49,7 @@ func main() {
 	err = strategy.Deploy(strings.Split(*cliStrategies, ","), os.Stdout, k8sclient, config.Config{
 		Image:     *cliImage,
 		Namespace: *cliNamespace,
-		Frequency: *cliFrequency,
+		CronSplit: *cliCronSplit,
 		Prefix:    *cliPrefix,
 		Bucket:    *cliBucket,
 		Credentials: config.Credentials{

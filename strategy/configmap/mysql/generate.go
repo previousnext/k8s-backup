@@ -42,7 +42,7 @@ func getMysqlConnection(configmap corev1.ConfigMap) (string, string, string, str
 }
 
 // Helper function to convert a PersistentVolumeClaim into a backup CronJob task.
-func generateCronJob(group string, configmap corev1.ConfigMap, cfg config.Config) (*batchv1beta1.CronJob, error) {
+func generateCronJob(group, schedule string, configmap corev1.ConfigMap, cfg config.Config) (*batchv1beta1.CronJob, error) {
 	cronjob := &batchv1beta1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: configmap.ObjectMeta.Namespace,
@@ -83,7 +83,7 @@ func generateCronJob(group string, configmap corev1.ConfigMap, cfg config.Config
 	)
 
 	cronjob.Spec = batchv1beta1.CronJobSpec{
-		Schedule:                cfg.Frequency,
+		Schedule:                schedule,
 		ConcurrencyPolicy:       batchv1beta1.ForbidConcurrent,
 		StartingDeadlineSeconds: &deadline,
 		JobTemplate: batchv1beta1.JobTemplateSpec{

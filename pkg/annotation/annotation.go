@@ -9,6 +9,7 @@ import (
 // Key is used for grouping backups in storage.
 const Key = "k8s-backup.group"
 
+// GetGroup will return the group based on annotations.
 func GetGroup(meta metav1.ObjectMeta) (string, error) {
 	if val, ok := meta.Annotations[Key]; ok {
 		return val, nil

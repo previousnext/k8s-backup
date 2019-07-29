@@ -10,6 +10,7 @@ import (
 
 	"github.com/previousnext/k8s-backup/config"
 	"github.com/previousnext/k8s-backup/pkg/annotation"
+	"github.com/previousnext/k8s-backup/pkg/cronutils"
 	skprcronjob "github.com/previousnext/skpr/utils/k8s/cronjob"
 )
 
@@ -25,6 +26,8 @@ func Deploy(w io.Writer, client *kubernetes.Clientset, cfg config.Config) error 
 		return errors.Wrap(err, "failed to lookup PersistentVolumeClaims")
 	}
 
+	schedule := cronutils.NewSplitter(cfg.CronSplit)
+
 	for _, pvc := range pvcs.Items {
 		fmt.Println("Syncing CronJob:", pvc.ObjectMeta.Namespace, "|", pvc.ObjectMeta.Name)
 
@@ -34,7 +37,7 @@ func Deploy(w io.Writer, client *kubernetes.Clientset, cfg config.Config) error 
 			continue
 		}
 
-		cronjob, err := generateCronJob(group, pvc, cfg)
+		cronjob, err := generateCronJob(group, schedule.Increment(), pvc, cfg)
 		if err != nil {
 			return errors.Wrap(err, "failed to generate CronJob")
 		}

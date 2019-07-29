@@ -13,7 +13,7 @@ import (
 )
 
 // Helper function to convert a PersistentVolumeClaim into a backup CronJob task.
-func generateCronJob(group string, pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batchv1beta1.CronJob, error) {
+func generateCronJob(group, schedule string, pvc corev1.PersistentVolumeClaim, cfg config.Config) (*batchv1beta1.CronJob, error) {
 	cronjob := &batchv1beta1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: pvc.ObjectMeta.Namespace,
@@ -49,7 +49,7 @@ func generateCronJob(group string, pvc corev1.PersistentVolumeClaim, cfg config.
 	)
 
 	cronjob.Spec = batchv1beta1.CronJobSpec{
-		Schedule:                cfg.Frequency,
+		Schedule:                schedule,
 		ConcurrencyPolicy:       batchv1beta1.ForbidConcurrent,
 		StartingDeadlineSeconds: &deadline,
 		JobTemplate: batchv1beta1.JobTemplateSpec{
