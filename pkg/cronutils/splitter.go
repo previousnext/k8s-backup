@@ -17,11 +17,11 @@ func NewSplitter(diff int) *Splitter {
 
 // Increment and return the latest cron schedule.
 func (s *Splitter) Increment() string {
-	if s.current > 60 {
+	if s.current >= 60 {
 		s.current = 0
 	}
 
-	cron := fmt.Sprintf("%d * * * *", s.current)
+	cron := fmt.Sprintf("%d 0 * * *", s.current)
 
 	s.current = s.current + s.diff
 
