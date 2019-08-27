@@ -5,7 +5,7 @@ type Config struct {
 	Namespace   string
 	Image       string
 	Prefix      string
-	Frequency   string
+	CronSplit   int
 	Bucket      string
 	Credentials Credentials
 	Resources   Resources

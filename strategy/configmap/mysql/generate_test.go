@@ -27,7 +27,7 @@ func TestGenerateCronJob(t *testing.T) {
 		Namespace: "default",
 		Image:     "previousnext/k8s-backup:latest",
 		Prefix:    "test",
-		Frequency: "* * * * *",
+		CronSplit: 5,
 		Bucket:    "test-bucket",
 		Credentials: config.Credentials{
 			ID:     "xxxxxxxxxxxxxxxx",

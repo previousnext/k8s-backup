@@ -18,8 +18,8 @@ func (c Config) Validate() error {
 		return errors.New("not found: bucket")
 	}
 
-	if c.Frequency == "" {
-		return errors.New("not found: frequency")
+	if c.CronSplit == 0 {
+		return errors.New("not found: cron split")
 	}
 
 	if c.Resources.CPU == "" {

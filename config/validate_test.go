@@ -30,8 +30,8 @@ func TestValidate(t *testing.T) {
 	err = cfg.Validate()
 	assert.NotNil(t, err)
 
-	// Need to set Frequency.
-	cfg.Frequency = "* * * * *"
+	// Need to set CronSplit.
+	cfg.CronSplit = 5
 
 	err = cfg.Validate()
 	assert.NotNil(t, err)
